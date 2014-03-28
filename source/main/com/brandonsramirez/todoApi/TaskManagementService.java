@@ -23,12 +23,12 @@ public class TaskManagementService {
   }
 
   /**
-    * Persist a new task.  The persistent identifier will be added to the object
-    * if not already present.
-    *
-    * @param task Metadata of proposed new object
-    * @return Unique identifier for persistent storage
-    */
+   * Persist a new task.  The persistent identifier will be added to the object
+   * if not already present.
+   *
+   * @param task Metadata of proposed new object
+   * @return Unique identifier for persistent storage
+   */
   public static String createTask(Task task) {
     return daoFactory.createTaskDao().createTask(task);
     // @todo search index
