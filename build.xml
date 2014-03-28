@@ -34,6 +34,12 @@
       </fileset>
    </path>
 
+   <path id="mongodb.class.path">
+      <fileset dir="${lib.dir}" id="mongodb.libs">
+         <include name="mongo-java-driver-2.11.4.jar" />
+      </fileset>
+   </path>
+
    <path id="test.class.path">
       <fileset dir="${lib.dir}">
          <include name="junit-4.11.jar" />
@@ -44,6 +50,7 @@
    <path id="build.class.path">
       <path refid="javax.class.path" />
       <path refid="jersey.class.path" />
+      <path refid="mongodb.class.path" />
    </path>
 
    <target name="compile">
