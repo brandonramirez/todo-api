@@ -14,17 +14,27 @@ public class ConfigurationListener implements ServletContextListener {
   @Override
   public void contextInitialized(ServletContextEvent event) {
     ServletContext ctx = event.getServletContext();
+    configureDao(ctx);
+    configureSearchProvider(ctx);
+  }
+
+  @Override
+  public void contextDestroyed(ServletContextEvent e) {
+    // nothing to do
+  }
+
+  private static void configureDao(ServletContext ctx) {
     ClassLoader cl = ctx.getClassLoader();
 
     InputStream is = null;
     try {
       is = cl.getResourceAsStream("dao.properties");
       if (is != null) {
-        ctx.log("Initializing TaskManagementService from " + cl.getResource("dao.properties"));
+        ctx.log("Initializing TaskDao from " + cl.getResource("dao.properties"));
         Properties p = new Properties();
         p.load(is);
         TaskManagementService.setDaoFactory(buildDao(p, ctx));
-        ctx.log("Succesfully initialized TaskManagementService from " + cl.getResource("dao.properties") + " with DAO class " + p.getProperty("className"));
+        ctx.log("Succesfully initialized TaskDao from " + cl.getResource("dao.properties") + " with DAO class " + p.getProperty("className"));
       }
       else {
         ctx.log("Unable to find dao.properties on the class path - todo api will not function!");
@@ -43,13 +53,8 @@ public class ConfigurationListener implements ServletContextListener {
     }
   }
 
-  @Override
-  public void contextDestroyed(ServletContextEvent e) {
-    // nothing to do
-  }
-
   @SuppressWarnings("unchecked")  // due to use of reflections
-  private DaoFactory buildDao(Properties p, ServletContext ctx) {
+  private static DaoFactory buildDao(Properties p, ServletContext ctx) {
     String className = p.getProperty("className", "com.brandonsramirez.todoApi.dal.InMemoryTaskDaoFactory");
 
     try {
@@ -69,5 +74,36 @@ public class ConfigurationListener implements ServletContextListener {
     }
 
     return null;
+  }
+
+  private static void configureSearchProvider(ServletContext ctx) {
+    ClassLoader cl = ctx.getClassLoader();
+
+    InputStream is = null;
+    try {
+      is = cl.getResourceAsStream("search.properties");
+      if (is != null) {
+        ctx.log("Initializing SearchProvider from " + cl.getResource("search.properties"));
+        Properties p = new Properties();
+        p.load(is);
+        TaskManagementService.setSearchProvider(new SearchlySearchProvider(p.getProperty("url")));
+        ctx.log("Succesfully initialized SearchProvider from " + cl.getResource("search.properties"));
+      }
+      else {
+        TaskManagementService.setSearchProvider(new StubSearchProvider());
+        ctx.log("Unable to find search.properties on the class path - search will not function!");
+      }
+    }
+    catch (IOException e) {
+      ctx.log("Failed reading dao.properties.", e);
+    }
+    finally {
+      if (is != null) {
+        try {
+          is.close();
+        }
+        catch (IOException e) { /* ignore */ }
+      }
+    }
   }
 }

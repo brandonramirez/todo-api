@@ -18,9 +18,15 @@ public class TaskResource {
 
   @GET
   public Response listTasks(@DefaultValue("0")  @QueryParam("offset") int offset,
-                            @DefaultValue("10") @QueryParam("max") int max)
+                            @DefaultValue("10") @QueryParam("max") int max,
+                            @DefaultValue("")   @QueryParam("q") String query)
   {
-    return Response.ok().entity(restified(TaskManagementService.listTasks(offset, max))).build();
+    if ("".equals(query)) {
+      return Response.ok().entity(restified(TaskManagementService.listTasks(offset, max))).build();
+    }
+    else {
+      return Response.ok().entity(restified(TaskManagementService.search(query, offset, max))).build();
+    }
   }
 
   @GET

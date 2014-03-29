@@ -4,6 +4,7 @@ import java.util.List;
 
 public class TaskManagementService {
   private static DaoFactory daoFactory;
+  private static SearchProvider searchProvider;
 
   /**
    * Configure the DAO to use for persistent storage
@@ -14,8 +15,16 @@ public class TaskManagementService {
     daoFactory = taskDaoFactory;
   }
 
+  static void setSearchProvider(SearchProvider providerToUse) {
+    searchProvider = providerToUse;
+  }
+
   public static PaginatedSearchResults<Task> listTasks(int offset, int max) {
     return daoFactory.createTaskDao().listTasks(offset, max);
+  }
+
+  public static PaginatedSearchResults<Task> search(String query, int offset, int max) {
+    return searchProvider.search(query, offset, max);
   }
 
   public static Task getTask(String taskId) {
@@ -31,13 +40,14 @@ public class TaskManagementService {
    * @throws DuplicateTaskException If a task already exists with the same title.
    */
   public static String createTask(Task task) throws DuplicateTaskException {
-    return daoFactory.createTaskDao().createTask(task);
-    // @todo search index
+    String id = daoFactory.createTaskDao().createTask(task);
+    searchProvider.addToIndex(task);
+    return id;
   }
 
   public static void updateTask(Task task) {
     daoFactory.createTaskDao().updateTask(task);
-    // @todo search index
+    searchProvider.updateInIndex(task);
   }
 
   public static void deleteTask(Task task) {
@@ -46,6 +56,6 @@ public class TaskManagementService {
 
   public static void deleteTask(String taskId) {
     daoFactory.createTaskDao().deleteTask(taskId);
-    // @todo Delete from search index
+    searchProvider.removeFromIndex(taskId);
   }
 }

@@ -40,6 +40,15 @@
       </fileset>
    </path>
 
+   <path id="jest.class.path">
+      <fileset dir="${lib.dir}" id="jest.libs">
+         <include name="jest-0.1.0.jar" />
+         <include name="jest-common-0.1.1-SNAPSHOT.jar" />
+         <include name="elasticsearch-1.0.0.jar" />
+         <include name="gson-2.2.4.jar" />
+      </fileset>
+   </path>
+
    <path id="test.class.path">
       <fileset dir="${lib.dir}">
          <include name="junit-4.11.jar" />
@@ -51,6 +60,7 @@
       <path refid="javax.class.path" />
       <path refid="jersey.class.path" />
       <path refid="mongodb.class.path" />
+      <path refid="jest.class.path" />
    </path>
 
    <target name="compile">
