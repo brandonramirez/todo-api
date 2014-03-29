@@ -10,7 +10,7 @@ TaskResource:
 
 Task:
 
-  - Central entity.  Contains only state and (if possible possibly) validation
+  - Central entity.  Contains only state and (possibly) validation
   - Properties:
     - taskId: Persistent primary key
     - title: User-supplied textual identifier of the task (does this need to be unique?)
@@ -19,10 +19,9 @@ Task:
 
 DbObjectAdapter:
 
-  - implemenmts the Mongo client's DbObject interface
+  - implements the MongoDB client's DbObject interface
   - has a `toTask()` method which returns a Task object
-  - public no-arg constructor
-  - second constructor takes a Task object and uses that as the source for DbObject's `put` and `get` methods.
+  - constructor takes a Task object and uses that as the source for DbObject's `put` and `get` methods.
 
 TaskManagementService:
 
@@ -30,7 +29,7 @@ TaskManagementService:
 
 TaskDao interface:
 
-  - Defines a save
+  - Defines a way to read and write todo items from storage
   - InMemoryTaskDao - HashMap-based implementation
   - MongoDbTaskDao - MongoDB-based implementation
 
