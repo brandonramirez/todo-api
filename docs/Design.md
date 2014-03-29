@@ -45,5 +45,5 @@ ConfigurationListner:
   - ServletContextListener which reads in /dao.properties and /search.properties from class path
   - dao.properties will drive which DAO impl to create and its initialization
   - search.properties defines API details for searbox.io
-  - call TaskManagementService.setDao with a reference to the new TaskDaoFactory object.
-  - call TaskManagementService.setSearchProvider with a reference to the search provider object.
+  - call TaskManagementService.setDao with a reference to the new `DaoFactory` object.
+  - call TaskManagementService.setSearchProvider with a reference to the `SearchProvider` object.
