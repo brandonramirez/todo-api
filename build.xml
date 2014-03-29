@@ -49,6 +49,12 @@
       </fileset>
    </path>
 
+   <path id="twilio.class.path">
+      <fileset dir="${lib.dir}" id="twilio.libs">
+         <include name="twilio-java-sdk-3.4.2-jar-with-dependencies.jar" />
+      </fileset>
+   </path>
+
    <path id="test.class.path">
       <fileset dir="${lib.dir}">
          <include name="junit-4.11.jar" />
@@ -61,6 +67,7 @@
       <path refid="jersey.class.path" />
       <path refid="mongodb.class.path" />
       <path refid="jest.class.path" />
+      <path refid="twilio.class.path" />
    </path>
 
    <target name="compile">

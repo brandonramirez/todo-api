@@ -3,6 +3,7 @@ package com.brandonsramirez.todoApi;
 public class TaskManagementService {
   private static DaoFactory daoFactory;
   private static SearchProvider searchProvider;
+  private static SmsNotifier smsNotifier;
 
   /**
    * Configure the DAO to use for persistent storage
@@ -15,6 +16,10 @@ public class TaskManagementService {
 
   static void setSearchProvider(SearchProvider providerToUse) {
     searchProvider = providerToUse;
+  }
+
+  static void setSmsNotifier(SmsNotifier notifierToUse) {
+    smsNotifier = notifierToUse;
   }
 
   public static PaginatedSearchResults<Task> listTasks(int offset, int max) {
@@ -70,6 +75,6 @@ public class TaskManagementService {
   }
 
   private static void onTaskCompletion(Task task) {
-    // @todo send text message alert
+    smsNotifier.notifyUserOfTaskCompletion(task);
   }
 }

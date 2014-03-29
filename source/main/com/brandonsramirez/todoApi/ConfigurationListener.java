@@ -16,6 +16,7 @@ public class ConfigurationListener implements ServletContextListener {
     ServletContext ctx = event.getServletContext();
     configureDao(ctx);
     configureSearchProvider(ctx);
+    configureSmsNotifier(ctx);
   }
 
   @Override
@@ -96,6 +97,36 @@ public class ConfigurationListener implements ServletContextListener {
     }
     catch (IOException e) {
       ctx.log("Failed reading search.properties.", e);
+    }
+    finally {
+      if (is != null) {
+        try {
+          is.close();
+        }
+        catch (IOException e) { /* ignore */ }
+      }
+    }
+  }
+
+  private static void configureSmsNotifier(ServletContext ctx) {
+    ClassLoader cl = ctx.getClassLoader();
+
+    InputStream is = null;
+    try {
+      is = cl.getResourceAsStream("twilio.properties");
+      if (is != null) {
+        ctx.log("Initializing SmsNotifier from " + cl.getResource("twilio.properties"));
+        Properties p = new Properties();
+        p.load(is);
+        TaskManagementService.setSmsNotifier(new TwilioSmsNotifier(p.getProperty("accountSid"), p.getProperty("authToken"), p.getProperty("twilioNumber"), p.getProperty("mobileNumber")));
+        ctx.log("Succesfully initialized SmsNotifier from " + cl.getResource("twilio.properties"));
+      }
+      else {
+        TaskManagementService.setSmsNotifier(new StubSmsNotifier());
+      }
+    }
+    catch (IOException e) {
+      ctx.log("Failed reading twilio.properties");
     }
     finally {
       if (is != null) {
