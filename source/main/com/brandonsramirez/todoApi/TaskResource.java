@@ -60,10 +60,6 @@ public class TaskResource {
   @PUT
   @Path("/{taskId}")
   public Response updateTask(@PathParam("taskId") String taskId, Task task) {
-    Task existingTask = TaskManagementService.getTask(taskId);
-    if (existingTask == null) {
-      throw new WebApplicationException(Response.Status.NOT_FOUND);
-    }
     task.setTaskId(taskId);
     try {
       TaskManagementService.updateTask(task);
