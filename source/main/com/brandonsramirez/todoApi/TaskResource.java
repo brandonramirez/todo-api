@@ -64,8 +64,14 @@ public class TaskResource {
     if (existingTask == null) {
       throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
-    TaskManagementService.updateTask(task);
-    return Response.noContent().build();
+    task.setTaskId(taskId);
+    try {
+      TaskManagementService.updateTask(task);
+      return Response.noContent().build();
+    }
+    catch (UnknownTaskException e) {
+      return Response.status(Response.Status.NOT_FOUND).build();
+    }
   }
 
   @DELETE

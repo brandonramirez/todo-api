@@ -27,4 +27,13 @@ class DbObjectAdapter extends BasicDBObject {
     t.setDone(getBoolean("done"));
     return t;
   }
+
+  /**
+   * Remove the primary key / taskId from this object.  This is
+   * needed for updating MongoDB.
+   */
+  DbObjectAdapter removeId() {
+    remove("_id");
+    return this;
+  }
 }

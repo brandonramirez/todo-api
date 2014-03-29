@@ -45,9 +45,21 @@ public class TaskManagementService {
     return id;
   }
 
-  public static void updateTask(Task task) {
+  public static void updateTask(Task task) throws UnknownTaskException {
+    Task existingTask = getTask(task.getTaskId());
+    if (existingTask == null) {
+      throw new UnknownTaskException();
+    }
+    boolean transitionToComplete = !existingTask.isDone() && task.isDone();
     daoFactory.createTaskDao().updateTask(task);
-    searchProvider.updateInIndex(task);
+    try {
+      searchProvider.updateInIndex(task);
+    }
+    finally {
+      if (transitionToComplete) {
+        onTaskCompletion(task);
+      }
+    }
   }
 
   public static void deleteTask(Task task) {
@@ -57,5 +69,9 @@ public class TaskManagementService {
   public static void deleteTask(String taskId) {
     daoFactory.createTaskDao().deleteTask(taskId);
     searchProvider.removeFromIndex(taskId);
+  }
+
+  private static void onTaskCompletion(Task task) {
+    // @todo send text message alert
   }
 }

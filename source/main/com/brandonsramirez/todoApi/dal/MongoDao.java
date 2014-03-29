@@ -44,8 +44,14 @@ public class MongoDao implements TaskDao {
 
   @Override
   public Task getTask(String taskId) {
-    DBObject o = tasks.findOne(new BasicDBObject("_id", new ObjectId(taskId)));
-    return new DbObjectAdapter(o).toTask();
+    try {
+      DBObject o = tasks.findOne(new BasicDBObject("_id", new ObjectId(taskId)));
+      return new DbObjectAdapter(o).toTask();
+    }
+    catch (IllegalArgumentException e) {
+      // happens if the object id is malformed.  if it is, then it clearly does not map to a Task, thus return null.
+      return null;
+    }
   }
 
   @Override
@@ -63,7 +69,7 @@ public class MongoDao implements TaskDao {
 
   @Override
   public void updateTask(Task task) {
-    tasks.update(new BasicDBObject("_id", new ObjectId(task.getTaskId())), new DbObjectAdapter(task));
+    tasks.update(new BasicDBObject("_id", new ObjectId(task.getTaskId())), new DbObjectAdapter(task).removeId());
   }
 
   @Override
