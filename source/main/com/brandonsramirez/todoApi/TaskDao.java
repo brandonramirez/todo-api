@@ -10,7 +10,7 @@ import java.util.List;
 public interface TaskDao {
   public PaginatedSearchResults<Task> listTasks(int offset, int max);
   public Task getTask(String taskId);
-  public String createTask(Task task);
+  public String createTask(Task task) throws DuplicateTaskException;
   public void updateTask(Task task);
   public void deleteTask(String taskId);
 }

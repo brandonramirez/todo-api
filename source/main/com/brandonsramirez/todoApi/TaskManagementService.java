@@ -28,8 +28,9 @@ public class TaskManagementService {
    *
    * @param task Metadata of proposed new object
    * @return Unique identifier for persistent storage
+   * @throws DuplicateTaskException If a task already exists with the same title.
    */
-  public static String createTask(Task task) {
+  public static String createTask(Task task) throws DuplicateTaskException {
     return daoFactory.createTaskDao().createTask(task);
     // @todo search index
   }

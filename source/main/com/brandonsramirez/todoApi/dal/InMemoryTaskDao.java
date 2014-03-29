@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.brandonsramirez.todoApi.DuplicateTaskException;
 import com.brandonsramirez.todoApi.PaginatedSearchResults;
 import com.brandonsramirez.todoApi.Task;
 import com.brandonsramirez.todoApi.TaskDao;
@@ -42,12 +43,20 @@ public class InMemoryTaskDao implements TaskDao {
   }
 
   @Override
-  public String createTask(Task task) {
+  public String createTask(Task task) throws DuplicateTaskException {
     if (task.getTaskId() == null) {
       // Generally speaking, I don't like methods that modify their own inputs.
       // In this case, it's justified because we are acting as a mock database.
       // This line basically assigns a PK similar to a DBMS would do.
       task.setTaskId("" + task.getTitle().hashCode());
+    }
+    if (store.containsKey(task.getTaskId())) {
+      throw new DuplicateTaskException();
+    }
+    for (Task existingTask : store.values()) {
+      if (existingTask.getTitle().equals(task.getTitle())) {
+        throw new DuplicateTaskException();
+      }
     }
     store.put(task.getTaskId(), task);
     return task.getTaskId();

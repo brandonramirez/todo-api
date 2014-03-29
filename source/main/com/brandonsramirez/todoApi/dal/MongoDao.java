@@ -2,6 +2,7 @@ package com.brandonsramirez.todoApi.dal;
 
 import java.util.ArrayList;
 
+import com.brandonsramirez.todoApi.DuplicateTaskException;
 import com.brandonsramirez.todoApi.PaginatedSearchResults;
 import com.brandonsramirez.todoApi.Task;
 import com.brandonsramirez.todoApi.TaskDao;
@@ -12,6 +13,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoException;
 import com.mongodb.WriteConcern;
 
 import org.bson.types.ObjectId;
@@ -47,11 +49,16 @@ public class MongoDao implements TaskDao {
   }
 
   @Override
-  public String createTask(Task task) {
+  public String createTask(Task task) throws DuplicateTaskException {
     DbObjectAdapter o = new DbObjectAdapter(task);
-    tasks.insert(WriteConcern.JOURNALED, o);
-    task.setTaskId(o.getObjectId("_id").toString());
-    return task.getTaskId();
+    try {
+      tasks.insert(WriteConcern.JOURNALED, o);
+      task.setTaskId(o.getObjectId("_id").toString());
+      return task.getTaskId();
+    }
+    catch (MongoException.DuplicateKey e) {
+      throw new DuplicateTaskException(e);
+    }
   }
 
   @Override

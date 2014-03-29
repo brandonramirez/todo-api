@@ -35,7 +35,13 @@ public class TaskResource {
 
   @POST
   public Response createTask(Task task) {
-    TaskManagementService.createTask(task);
+    try {
+      TaskManagementService.createTask(task);
+    }
+    catch (DuplicateTaskException e) {
+      return Response.status(Response.Status.CONFLICT).build();
+    }
+
     try {
       return Response.created(new URI("todo/" + task.getTaskId())).entity(task).build();
     }

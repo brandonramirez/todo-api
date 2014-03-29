@@ -1,5 +1,6 @@
 package com.brandonsramirez.todoApi.dal;
 
+import com.brandonsramirez.todoApi.DuplicateTaskException;
 import com.brandonsramirez.todoApi.PaginatedSearchResults;
 import com.brandonsramirez.todoApi.Task;
 
@@ -43,12 +44,18 @@ public class InMemoryTaskDaoTest {
     t6.setTitle("Verify success");
     t6.setBody("Tests should pass now.  Otherwise, we are sad.");
 
-    dao.createTask(t1);
-    dao.createTask(t2);
-    dao.createTask(t3);
-    dao.createTask(t4);
-    dao.createTask(t5);
-    dao.createTask(t6);
+    try {
+      dao.createTask(t1);
+      dao.createTask(t2);
+      dao.createTask(t3);
+      dao.createTask(t4);
+      dao.createTask(t5);
+      dao.createTask(t6);
+    }
+    catch (DuplicateTaskException e) {
+      // This is a unit test.  I don't know what we could do if creating a task as part of test setup failed in a new store.
+      throw new RuntimeException(e);
+    }
   }
 
   @After
@@ -82,7 +89,12 @@ public class InMemoryTaskDaoTest {
     Task t = new Task();
     t.setTaskId("hello");
     t.setTitle("did we save this successfully?");
-    dao.createTask(t);
+    try {
+      dao.createTask(t);
+    }
+    catch (DuplicateTaskException e) {
+      fail("Failed to create a task that we know does not yet exist.");
+    }
     
     t = dao.getTask("hello");
     assertNotNull(t);
