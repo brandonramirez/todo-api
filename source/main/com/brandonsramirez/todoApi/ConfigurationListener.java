@@ -95,7 +95,7 @@ public class ConfigurationListener implements ServletContextListener {
       }
     }
     catch (IOException e) {
-      ctx.log("Failed reading dao.properties.", e);
+      ctx.log("Failed reading search.properties.", e);
     }
     finally {
       if (is != null) {
