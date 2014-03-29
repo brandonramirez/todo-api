@@ -1,6 +1,9 @@
 *.class
 .DS_Store
 
+# From ant unit test runs.
+TEST-*
+
 # Package Files #
 /*.jar
 *.war
