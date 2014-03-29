@@ -1,7 +1,5 @@
 package com.brandonsramirez.todoApi;
 
-import java.util.List;
-
 public class TaskManagementService {
   private static DaoFactory daoFactory;
   private static SearchProvider searchProvider;
