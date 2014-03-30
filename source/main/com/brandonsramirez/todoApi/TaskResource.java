@@ -129,6 +129,38 @@ public class TaskResource {
   }
 
   /**
+   * For clients that do not support the HTTP PATCH method, we support partial updates via POST to the resource URI
+   * and accept form-encoded attribute mappings.
+   *
+   * This method is not purely RESTful because we are supporting idempotent partial updates via POST.  However, it
+   * also does not really violate any rules, so it is a useful corner of the standard to insert compatibility support.
+   */
+  @POST
+  @Path("/{taskId}")
+  @Consumes("application/x-www-form-urlencoded")
+  public Response partialUpdateTask(@PathParam("taskId") String taskId, @FormParam("title") String title, @FormParam("body") String body, @FormParam("done") Boolean done) {
+    Task task = TaskManagementService.getTask(taskId);
+    if (task == null) {
+      throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+    if (title == null && body == null && done == null) {
+      return Response.notModified().build();
+    }
+
+    if (title != null) {
+      task.setTitle(title);
+    }
+    if (body != null) {
+      task.setBody(body);
+    }
+    if (done != null) {
+      task.setDone(done.booleanValue());
+    }
+
+    return updateTask(task.getTaskId(), task);
+  }
+
+  /**
     * Decorate search results with REST-style information.  Specifically, resource URI's.
     */
   private PaginatedSearchResults<Task> restified(final PaginatedSearchResults<Task> bare) {
