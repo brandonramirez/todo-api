@@ -3,12 +3,16 @@ package com.brandonsramirez.todoApi;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
+
+import com.brandonsramirez.rest.PATCH;
+import com.brandonsramirez.rest.JsonPatchOperation;
 
 @Path("/todo")
 @Consumes("application/json")
@@ -80,6 +84,47 @@ public class TaskResource {
     else {
       TaskManagementService.deleteTask(task);
       return Response.noContent().build();
+    }
+  }
+
+  @PATCH
+  @Path("/{taskId}")
+  //@Consumes("application/json-patch+json")
+  public Response patchTask(@PathParam("taskId") String taskId, List<JsonPatchOperation> patch) {
+    Task task = TaskManagementService.getTask(taskId);
+    if (task == null) {
+      throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
+    boolean changed = false;
+
+    for (JsonPatchOperation change : patch) {
+      // This is home-grown, so for now we only support replace.  I don't think any other op
+      // makes sense for our schema.
+      if ("replace".equals(change.getOp()) && change.getPath() != null) {
+        changed = true;
+
+        switch (change.getPath()) {
+          case "/title":
+            task.setTitle(change.getValue());
+            break;
+
+          case "/body":
+            task.setBody(change.getValue());
+            break;
+
+          case "/done":
+            task.setDone("true".equals(change.getValue()));
+            break;
+        }
+      }
+    }
+
+    if (changed) {
+      return updateTask(task.getTaskId(), task);
+    }
+    else {
+      return Response.notModified().build();
     }
   }
 
