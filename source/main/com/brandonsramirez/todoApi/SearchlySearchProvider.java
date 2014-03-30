@@ -25,7 +25,7 @@ public class SearchlySearchProvider implements SearchProvider {
 
   public void addToIndex(Task task) {
     try {
-      client.execute(new Index.Builder(task).index("tasks").type("task").id("1").build());
+      client.execute(new Index.Builder(task).index("tasks").type("task").id(task.getTaskId()).build());
     }
     catch (Exception e) {
       // It's pretty bad that JEST generically declares "Exception".  What can I do with that?
@@ -39,7 +39,11 @@ public class SearchlySearchProvider implements SearchProvider {
 
   public void removeFromIndex(String taskId) {
     try {
-      client.execute(new Delete.Builder(taskId).index("tasks").build());
+      JestResult result = client.execute(new Delete.Builder(taskId).index("tasks").type("task").build());
+      if (!result.isSucceeded()) {
+        System.out.println("Failed to delete task " + taskId);
+        System.out.println("Error from Searchly: " + result.getErrorMessage());
+      }
     }
     catch (Exception e) {
       throw new RuntimeException(e);
