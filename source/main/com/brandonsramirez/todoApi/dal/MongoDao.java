@@ -39,7 +39,7 @@ public class MongoDao implements TaskDao {
       tasks.add(new DbObjectAdapter(cursor.next()).toTask());
     }
     tasks.trimToSize();
-    return new PaginatedSearchResults<Task>(cursor.size(), tasks);
+    return new PaginatedSearchResults<Task>(cursor.count(), tasks);
   }
 
   @Override
