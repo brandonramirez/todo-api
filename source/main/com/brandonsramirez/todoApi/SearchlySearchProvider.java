@@ -39,11 +39,7 @@ public class SearchlySearchProvider implements SearchProvider {
 
   public void removeFromIndex(String taskId) {
     try {
-      JestResult result = client.execute(new Delete.Builder(taskId).index("tasks").type("task").build());
-      if (!result.isSucceeded()) {
-        System.out.println("Failed to delete task " + taskId);
-        System.out.println("Error from Searchly: " + result.getErrorMessage());
-      }
+      client.execute(new Delete.Builder(taskId).index("tasks").type("task").build());
     }
     catch (Exception e) {
       throw new RuntimeException(e);

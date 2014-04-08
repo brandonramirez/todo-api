@@ -30,7 +30,7 @@ Installing
 
         url=http://site:<YOUR_API_KEY>@api.searchbox.io
 
-0. Createa  file called `twilio.properties` in the servlet container's classpath with the following settings and customize them with your Twilio API credentials, Twilio phone number and the phone number to which you want SMS alerts sent.
+0. Create a file called `twilio.properties` in the servlet container's classpath with the following settings and customize them with your Twilio API credentials, Twilio phone number and the phone number to which you want SMS alerts sent.
 
         accountSid=YOUR ACCOUNT SID
         authToken=YOUR TOKEN
