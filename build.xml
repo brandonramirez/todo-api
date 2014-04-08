@@ -91,7 +91,7 @@
    </target>
 
    <target name="test">
-      <junit printsummary="on" haltonerror="on" showoutput="true">
+      <junit printsummary="on" haltonfailure="on" showoutput="true">
          <classpath>
             <path refid="test.class.path" />
             <pathelement location="${classes.dir}" />
@@ -99,6 +99,7 @@
          <formatter type="plain" />
 
          <test name="com.brandonsramirez.todoApi.dal.InMemoryTaskDaoTest" />
+         <test name="com.brandonsramirez.todoApi.TaskManagementServiceTest" />
       </junit>
    </target>
 
