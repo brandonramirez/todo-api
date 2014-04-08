@@ -2,12 +2,11 @@
 
 <project name="todo-api">
 
-   <property name="source.dir"  value="source/main" />
+   <property name="source.dir"  value="src/main" />
    <property name="classes.dir" value="build/classes" />
    <property name="lib.dir"     value="lib" />
-   <property name="test.dir"    value="source/test" />
+   <property name="test.dir"    value="src/test" />
    <property name="war.file"    value="todoApi.war" />
-   <property name="web.inf.dir" value="source/web/WEB-INF" />
 
    <!-- These libraries are needed to compile code, but the servlet container should make them available at runtime already. -->
    <path id="javax.class.path">
