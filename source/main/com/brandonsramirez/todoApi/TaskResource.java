@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -19,6 +20,7 @@ import com.brandonsramirez.rest.JsonPatchOperation;
 @Produces("application/json")
 public class TaskResource {
   @Context private UriInfo uriInfo;
+  @Context ServletContext context;
 
   @GET
   public Response listTasks(@DefaultValue("0")  @QueryParam("offset") int offset,
@@ -26,17 +28,17 @@ public class TaskResource {
                             @DefaultValue("")   @QueryParam("q") String query)
   {
     if ("".equals(query)) {
-      return Response.ok().entity(restified(TaskManagementService.listTasks(offset, max))).build();
+      return Response.ok().entity(restified(ServiceLocator.getTaskManagementService(context).listTasks(offset, max))).build();
     }
     else {
-      return Response.ok().entity(restified(TaskManagementService.search(query, offset, max))).build();
+      return Response.ok().entity(restified(ServiceLocator.getTaskManagementService(context).search(query, offset, max))).build();
     }
   }
 
   @GET
   @Path("/{taskId}")
   public Response getTask(@PathParam("taskId") String taskId) {
-    Task task = TaskManagementService.getTask(taskId);
+    Task task = ServiceLocator.getTaskManagementService(context).getTask(taskId);
     if (task == null) {
       throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
@@ -46,7 +48,7 @@ public class TaskResource {
   @POST
   public Response createTask(Task task) {
     try {
-      TaskManagementService.createTask(task);
+      ServiceLocator.getTaskManagementService(context).createTask(task);
     }
     catch (DuplicateTaskException e) {
       return Response.status(Response.Status.CONFLICT).build();
@@ -66,7 +68,7 @@ public class TaskResource {
   public Response updateTask(@PathParam("taskId") String taskId, Task task) {
     task.setTaskId(taskId);
     try {
-      TaskManagementService.updateTask(task);
+      ServiceLocator.getTaskManagementService(context).updateTask(task);
       return Response.noContent().build();
     }
     catch (UnknownTaskException e) {
@@ -77,12 +79,12 @@ public class TaskResource {
   @DELETE
   @Path("/{taskId}")
   public Response deleteTask(@PathParam("taskId") String taskId) {
-    Task task = TaskManagementService.getTask(taskId);
+    Task task = ServiceLocator.getTaskManagementService(context).getTask(taskId);
     if (task == null) {
       throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
     else {
-      TaskManagementService.deleteTask(task);
+      ServiceLocator.getTaskManagementService(context).deleteTask(task);
       return Response.noContent().build();
     }
   }
@@ -91,7 +93,7 @@ public class TaskResource {
   @Path("/{taskId}")
   //@Consumes("application/json-patch+json")
   public Response patchTask(@PathParam("taskId") String taskId, List<JsonPatchOperation> patch) {
-    Task task = TaskManagementService.getTask(taskId);
+    Task task = ServiceLocator.getTaskManagementService(context).getTask(taskId);
     if (task == null) {
       throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
@@ -139,7 +141,7 @@ public class TaskResource {
   @Path("/{taskId}")
   @Consumes("application/x-www-form-urlencoded")
   public Response partialUpdateTask(@PathParam("taskId") String taskId, @FormParam("title") String title, @FormParam("body") String body, @FormParam("done") Boolean done) {
-    Task task = TaskManagementService.getTask(taskId);
+    Task task = ServiceLocator.getTaskManagementService(context).getTask(taskId);
     if (task == null) {
       throw new WebApplicationException(Response.Status.NOT_FOUND);
     }

@@ -34,7 +34,7 @@ public class ConfigurationListener implements ServletContextListener {
         ctx.log("Initializing TaskDao from " + cl.getResource("dao.properties"));
         Properties p = new Properties();
         p.load(is);
-        TaskManagementService.setDaoFactory(buildDao(p, ctx));
+        ServiceLocator.getTaskManagementService(ctx).setDaoFactory(buildDao(p, ctx));
         ctx.log("Succesfully initialized TaskDao from " + cl.getResource("dao.properties") + " with DAO class " + p.getProperty("className"));
       }
       else {
@@ -87,11 +87,11 @@ public class ConfigurationListener implements ServletContextListener {
         ctx.log("Initializing SearchProvider from " + cl.getResource("search.properties"));
         Properties p = new Properties();
         p.load(is);
-        TaskManagementService.setSearchProvider(new SearchlySearchProvider(p.getProperty("url")));
+        ServiceLocator.getTaskManagementService(ctx).setSearchProvider(new SearchlySearchProvider(p.getProperty("url")));
         ctx.log("Succesfully initialized SearchProvider from " + cl.getResource("search.properties"));
       }
       else {
-        TaskManagementService.setSearchProvider(new StubSearchProvider());
+        ServiceLocator.getTaskManagementService(ctx).setSearchProvider(new StubSearchProvider());
         ctx.log("Unable to find search.properties on the class path - search will not function!");
       }
     }
@@ -118,11 +118,11 @@ public class ConfigurationListener implements ServletContextListener {
         ctx.log("Initializing SmsNotifier from " + cl.getResource("twilio.properties"));
         Properties p = new Properties();
         p.load(is);
-        TaskManagementService.setSmsNotifier(new TwilioSmsNotifier(p.getProperty("accountSid"), p.getProperty("authToken"), p.getProperty("twilioNumber"), p.getProperty("mobileNumber")));
+        ServiceLocator.getTaskManagementService(ctx).setSmsNotifier(new TwilioSmsNotifier(p.getProperty("accountSid"), p.getProperty("authToken"), p.getProperty("twilioNumber"), p.getProperty("mobileNumber")));
         ctx.log("Succesfully initialized SmsNotifier from " + cl.getResource("twilio.properties"));
       }
       else {
-        TaskManagementService.setSmsNotifier(new StubSmsNotifier());
+        ServiceLocator.getTaskManagementService(ctx).setSmsNotifier(new StubSmsNotifier());
       }
     }
     catch (IOException e) {

@@ -1,36 +1,36 @@
 package com.brandonsramirez.todoApi;
 
 public class TaskManagementService {
-  private static DaoFactory daoFactory;
-  private static SearchProvider searchProvider;
-  private static SmsNotifier smsNotifier;
+  private DaoFactory daoFactory;
+  private SearchProvider searchProvider;
+  private SmsNotifier smsNotifier;
 
   /**
    * Configure the DAO to use for persistent storage
    *
    * This is package-protected intentionally.  Please don't change it.
    */
-  static void setDaoFactory(DaoFactory taskDaoFactory) {
+  void setDaoFactory(DaoFactory taskDaoFactory) {
     daoFactory = taskDaoFactory;
   }
 
-  static void setSearchProvider(SearchProvider providerToUse) {
+  void setSearchProvider(SearchProvider providerToUse) {
     searchProvider = providerToUse;
   }
 
-  static void setSmsNotifier(SmsNotifier notifierToUse) {
+  void setSmsNotifier(SmsNotifier notifierToUse) {
     smsNotifier = notifierToUse;
   }
 
-  public static PaginatedSearchResults<Task> listTasks(int offset, int max) {
+  public PaginatedSearchResults<Task> listTasks(int offset, int max) {
     return daoFactory.createTaskDao().listTasks(offset, max);
   }
 
-  public static PaginatedSearchResults<Task> search(String query, int offset, int max) {
+  public PaginatedSearchResults<Task> search(String query, int offset, int max) {
     return searchProvider.search(query, offset, max);
   }
 
-  public static Task getTask(String taskId) {
+  public Task getTask(String taskId) {
     return daoFactory.createTaskDao().getTask(taskId);
   }
 
@@ -42,13 +42,13 @@ public class TaskManagementService {
    * @return Unique identifier for persistent storage
    * @throws DuplicateTaskException If a task already exists with the same title.
    */
-  public static String createTask(Task task) throws DuplicateTaskException {
+  public String createTask(Task task) throws DuplicateTaskException {
     String id = daoFactory.createTaskDao().createTask(task);
     searchProvider.addToIndex(task);
     return id;
   }
 
-  public static void updateTask(Task task) throws UnknownTaskException {
+  public void updateTask(Task task) throws UnknownTaskException {
     Task existingTask = getTask(task.getTaskId());
     if (existingTask == null) {
       throw new UnknownTaskException();
@@ -65,16 +65,16 @@ public class TaskManagementService {
     }
   }
 
-  public static void deleteTask(Task task) {
+  public void deleteTask(Task task) {
     deleteTask(task.getTaskId());
   }
 
-  public static void deleteTask(String taskId) {
+  public void deleteTask(String taskId) {
     daoFactory.createTaskDao().deleteTask(taskId);
     searchProvider.removeFromIndex(taskId);
   }
 
-  private static void onTaskCompletion(Task task) {
+  private void onTaskCompletion(Task task) {
     smsNotifier.notifyUserOfTaskCompletion(task);
   }
 }
