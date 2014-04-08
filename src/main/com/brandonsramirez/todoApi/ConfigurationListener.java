@@ -9,6 +9,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import com.brandonsramirez.todoApi.dal.InMemoryTaskDaoFactory;
 import com.brandonsramirez.todoApi.dal.MongoFactory;
 
 @WebListener
@@ -27,85 +28,53 @@ public class ConfigurationListener implements ServletContextListener {
   }
 
   private static void configureDao(ServletContext ctx) {
-    ClassLoader cl = ctx.getClassLoader();
-
-    InputStream is = null;
-    try {
-      is = cl.getResourceAsStream("dao.properties");
-      if (is != null) {
-        ctx.log("Initializing TaskDao from " + cl.getResource("dao.properties"));
-        Properties p = new Properties();
-        p.load(is);
-        ServiceLocator.getTaskManagementService(ctx).setDaoFactory(new MongoFactory(p));
-        ctx.log("Succesfully initialized TaskDao from " + cl.getResource("dao.properties") + " with DAO class " + p.getProperty("className"));
-      }
-      else {
-        ctx.log("Unable to find dao.properties on the class path - todo api will not function!");
-      }
+    Properties p = loadPropertiesFile(ctx, "dao.properties");
+    if (p != null) {
+      ServiceLocator.getTaskManagementService(ctx).setDaoFactory(new MongoFactory(p));
+      ctx.log("Initialized TaskDao from " + ctx.getClassLoader().getResource("dao.properties"));
     }
-    catch (IOException e) {
-      ctx.log("Failed reading dao.properties.", e);
-    }
-    finally {
-      if (is != null) {
-        try {
-          is.close();
-        }
-        catch (IOException e) { /* ignore */ }
-      }
+    else {
+      ServiceLocator.getTaskManagementService(ctx).setDaoFactory(new InMemoryTaskDaoFactory());
     }
   }
 
   private static void configureSearchProvider(ServletContext ctx) {
-    ClassLoader cl = ctx.getClassLoader();
-
-    InputStream is = null;
-    try {
-      is = cl.getResourceAsStream("search.properties");
-      if (is != null) {
-        ctx.log("Initializing SearchProvider from " + cl.getResource("search.properties"));
-        Properties p = new Properties();
-        p.load(is);
-        ServiceLocator.getTaskManagementService(ctx).setSearchProvider(new SearchlySearchProvider(p.getProperty("url")));
-        ctx.log("Succesfully initialized SearchProvider from " + cl.getResource("search.properties"));
-      }
-      else {
-        ServiceLocator.getTaskManagementService(ctx).setSearchProvider(new StubSearchProvider());
-        ctx.log("Unable to find search.properties on the class path - search will not function!");
-      }
+    Properties p = loadPropertiesFile(ctx, "search.properties");
+    if (p != null) {
+      ServiceLocator.getTaskManagementService(ctx).setSearchProvider(new SearchlySearchProvider(p.getProperty("url")));
+      ctx.log("Initialized SearchProvider from " + ctx.getClassLoader().getResource("search.properties"));
     }
-    catch (IOException e) {
-      ctx.log("Failed reading search.properties.", e);
-    }
-    finally {
-      if (is != null) {
-        try {
-          is.close();
-        }
-        catch (IOException e) { /* ignore */ }
-      }
+    else {
+      ServiceLocator.getTaskManagementService(ctx).setSearchProvider(new StubSearchProvider());
+      ctx.log("Unable to find search.properties on the class path - search will not function!");
     }
   }
 
   private static void configureSmsNotifier(ServletContext ctx) {
+    Properties p = loadPropertiesFile(ctx, "twilio.properties");
+    if (p != null) {
+      ServiceLocator.getTaskManagementService(ctx).setSmsNotifier(new TwilioSmsNotifier(p.getProperty("accountSid"), p.getProperty("authToken"), p.getProperty("twilioNumber"), p.getProperty("mobileNumber")));
+      ctx.log("Initialized SmsNotifier from " + ctx.getClassLoader().getResource("twilio.properties"));
+    }
+    else {
+      ServiceLocator.getTaskManagementService(ctx).setSmsNotifier(new StubSmsNotifier());
+    }
+  }
+
+  private static Properties loadPropertiesFile(ServletContext ctx, String fileName) {
     ClassLoader cl = ctx.getClassLoader();
 
     InputStream is = null;
     try {
-      is = cl.getResourceAsStream("twilio.properties");
+      is = cl.getResourceAsStream(fileName);
       if (is != null) {
-        ctx.log("Initializing SmsNotifier from " + cl.getResource("twilio.properties"));
         Properties p = new Properties();
         p.load(is);
-        ServiceLocator.getTaskManagementService(ctx).setSmsNotifier(new TwilioSmsNotifier(p.getProperty("accountSid"), p.getProperty("authToken"), p.getProperty("twilioNumber"), p.getProperty("mobileNumber")));
-        ctx.log("Succesfully initialized SmsNotifier from " + cl.getResource("twilio.properties"));
-      }
-      else {
-        ServiceLocator.getTaskManagementService(ctx).setSmsNotifier(new StubSmsNotifier());
+        return p;
       }
     }
     catch (IOException e) {
-      ctx.log("Failed reading twilio.properties");
+      ctx.log("Failed reading " + fileName);
     }
     finally {
       if (is != null) {
@@ -115,5 +84,7 @@ public class ConfigurationListener implements ServletContextListener {
         catch (IOException e) { /* ignore */ }
       }
     }
+
+    return null;
   }
 }
