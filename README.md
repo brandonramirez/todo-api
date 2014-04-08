@@ -21,7 +21,6 @@ Installing
 
 0. Create a file called `dao.properties` in the servlet container's classpath with the following settings and customize them for your database server.
 
-        className=com.brandonsramirez.todoApi.dal.MongoFactory
         host=localhost
         port=27017
         database=todo

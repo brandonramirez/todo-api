@@ -11,7 +11,10 @@ import com.mongodb.MongoClient;
 public class MongoFactory implements DaoFactory {
   private TaskDao dao;
 
-  @Override
+  public MongoFactory(Properties p) {
+    initialize(p);
+  }
+
   public void initialize(Properties p) {
     try {
       MongoClient client = new MongoClient(p.getProperty("host", "localhost"), Integer.parseInt(p.getProperty("port", "27017")));

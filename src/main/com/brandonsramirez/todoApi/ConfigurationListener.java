@@ -9,6 +9,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import com.brandonsramirez.todoApi.dal.MongoFactory;
+
 @WebListener
 public class ConfigurationListener implements ServletContextListener {
   @Override
@@ -34,7 +36,7 @@ public class ConfigurationListener implements ServletContextListener {
         ctx.log("Initializing TaskDao from " + cl.getResource("dao.properties"));
         Properties p = new Properties();
         p.load(is);
-        ServiceLocator.getTaskManagementService(ctx).setDaoFactory(buildDao(p, ctx));
+        ServiceLocator.getTaskManagementService(ctx).setDaoFactory(new MongoFactory(p));
         ctx.log("Succesfully initialized TaskDao from " + cl.getResource("dao.properties") + " with DAO class " + p.getProperty("className"));
       }
       else {
@@ -52,29 +54,6 @@ public class ConfigurationListener implements ServletContextListener {
         catch (IOException e) { /* ignore */ }
       }
     }
-  }
-
-  @SuppressWarnings("unchecked")  // due to use of reflections
-  private static DaoFactory buildDao(Properties p, ServletContext ctx) {
-    String className = p.getProperty("className", "com.brandonsramirez.todoApi.dal.InMemoryTaskDaoFactory");
-
-    try {
-      Class<DaoFactory> clazz = (Class<DaoFactory>) Class.forName(className);
-      DaoFactory factory = clazz.newInstance();
-      factory.initialize(p);
-      return factory;
-    }
-    catch (ClassNotFoundException e) {
-      ctx.log("Unable to find DAO implementation class " + className, e);
-    }
-    catch (IllegalAccessException e) {
-      ctx.log("Scoping problem with DAO implementation class " + className, e);
-    }
-    catch (InstantiationException e) {
-      ctx.log("Unable to create instance of class " + className, e);
-    }
-
-    return null;
   }
 
   private static void configureSearchProvider(ServletContext ctx) {

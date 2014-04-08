@@ -1,7 +1,5 @@
 package com.brandonsramirez.todoApi;
 
-import java.util.Properties;
-
 /**
  * Abstract factory for getting a handle to the persistence layer.
  *
@@ -13,6 +11,5 @@ import java.util.Properties;
  * @author Brandon Ramirez
  */
 public interface DaoFactory {
-  public void initialize(Properties p);
   public TaskDao createTaskDao();
 }
