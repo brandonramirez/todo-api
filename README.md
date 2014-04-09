@@ -11,9 +11,13 @@ This API provides a todo list.  Each todo item is called a task and has the foll
 Building
 --------
 
-To build, clone the repo, cd into the directory and run `ant build test`.
+Dependencies:
 
-The build process will output a file named `todoApi.war` in the top-level directory.  This is a standard Java EE
+* Maven
+
+To build, clone the repo, cd into the directory and run `mvn package`.
+
+The build process will output a file named `todo-api-1.1.war` in the `target` directory.  This is a standard Java EE
 web application which can be deployed into any servlet container.
 
 Installing
@@ -36,7 +40,7 @@ Installing
         twilioNumber=YOUR TWILIO-PROVIDED PHONE NUMBER
         mobileNumber=PHONE NUMBER WHERE YOU WANT TO RECEIVE ALERTS
 
-0. Copy `todoApi.war` into the servlet container's deployment directory.  For Tomcat, this is `$TOMCAT_HOME/webapps`.
+0. Copy `target/todo-api-1.1.war` into the servlet container's deployment directory and name it `todoApi.war`.  For Tomcat, this is `$TOMCAT_HOME/webapps`.
 0. Start up the servlet container.
 
 Consuming the API
