@@ -6,4 +6,4 @@
 *.war
 *.ear
 
-/build/
+/target/
