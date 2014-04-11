@@ -106,6 +106,10 @@ public class InMemoryTaskDaoTest {
     t.setTitle("This is some other task.");
     dao.updateTask(t);
     assertEquals("A title update did not hold.", "This is some other task.", dao.getTask("t3").getTitle());
+
+    t.setBody("some new status");
+    dao.updateTask(t);
+    assertEquals("A body update did not hold.", "some new status", dao.getTask("t3").getBody());
   }
 
   @Test
