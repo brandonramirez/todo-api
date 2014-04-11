@@ -16,6 +16,7 @@ Building
 Dependencies:
 
 * Maven
+* Java 7
 
 To build, clone the repo, cd into the directory and run `mvn package`.
 
