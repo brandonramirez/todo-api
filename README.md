@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/brandonramirez/todo-api.svg?branch=master)](https://travis-ci.org/brandonramirez/todo-api)
+
 todo-api
 ========
 
