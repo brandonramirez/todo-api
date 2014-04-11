@@ -3,7 +3,7 @@ package com.brandonsramirez.todoApi;
 import javax.servlet.ServletContext;
 
 public class ServiceLocator {
-  private static final String CONTEXT_ATTRIBUTE_NAME = "task.management.service";
+  static final String CONTEXT_ATTRIBUTE_NAME = "task.management.service";
 
   @SuppressWarnings("unchecked")
   public static TaskManagementService getTaskManagementService(ServletContext ctx) {

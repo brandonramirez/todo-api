@@ -191,18 +191,4 @@ public class TaskManagementServiceTest {
 
     assertTrue("Deleting a task did not result in a call to remove it from the search index.", removedFromIndex.val);
   }
-
-  /**
-   * Work-around for inner classes only being able to see final local variables from outer classes.
-   */
-  private static class BooleanHolder {
-    boolean val;
-
-    BooleanHolder() {
-      this(false);
-    }
-    BooleanHolder(boolean val) {
-      this.val = val;
-    }
-  }
 }

@@ -79,10 +79,7 @@ public class InMemoryTaskDao implements TaskDao {
     store.remove(taskId);
   }
 
-  /**
-    * Package protected because this is not part of the public API.  It's really only useful for unit testing.
-    */
-  void clear() {
+  public void clear() {
     store.clear();
   }
 }
