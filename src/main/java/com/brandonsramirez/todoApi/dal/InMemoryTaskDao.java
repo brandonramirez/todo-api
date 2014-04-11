@@ -70,7 +70,7 @@ public class InMemoryTaskDao implements TaskDao {
     }
 
     persisted.setTitle(task.getTitle());
-    persisted.setBody(task.getTitle());
+    persisted.setBody(task.getBody());
     persisted.setDone(task.isDone());
   }
 
