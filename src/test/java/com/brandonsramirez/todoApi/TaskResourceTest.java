@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 public class TaskResourceTest {
   private static final int TEST_HTTP_PORT = Integer.parseInt(System.getProperty("test.http.port", "8080"));
   private static final String TEST_LISTEN_HOST = System.getProperty("test.listen.host", "localhost");
-  public static final URI BASE_URI = UriBuilder.fromUri("http://" + TEST_LISTEN_HOST + "/").port(TEST_HTTP_PORT).build();
+  private static final URI BASE_URI = UriBuilder.fromUri("http://" + TEST_LISTEN_HOST + "/").port(TEST_HTTP_PORT).build();
 
   private InMemoryTaskDaoFactory daoFactory = new InMemoryTaskDaoFactory();
   private StubSearchProvider searchProvider = new StubSearchProvider();
@@ -58,7 +58,6 @@ public class TaskResourceTest {
     server.start();
 
     Client c = ClientBuilder.newClient();
-    //c.register(com.owlike.genson.ext.jaxrs.GensonJsonConverter.class);
     target = c.target(BASE_URI + app.getContextPath() + "rest").path("/todo");
   }
 
